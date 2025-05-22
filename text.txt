@@ -1,0 +1,7 @@
+SESSION_SECRET="OUF5M4Zl16469H4tHoVeafhvbeZFV4bIZ0D7COQWcw8MPBWn3eE7ZuOO1A8Wek9aYKqiIN7JVgLN5kKjhdOX1A=="
+DATABASE_URL="postgresql://quiznamerddev_user:Hxskf3jmrhbCBI5D9kFGtW33Jwg3jhDS@dpg-d0nb2i6mcj7s73dptffg-a/quiznamerddev"
+PGHOST="5432"
+PGDATABASE="quiznamerddev"
+PGUSER="quiznamerddev_user"
+PGPASSWORD="Hxskf3jmrhbCBI5D9kFGtW33Jwg3jhDS"
+PGPORT="5432"
