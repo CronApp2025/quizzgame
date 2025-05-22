@@ -497,23 +497,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin authentication
   app.post('/api/admin/login', async (req: Request, res: Response) => {
     try {
+      console.log('Login attempt:', req.body);
       const { username, password } = req.body;
       
       if (!username || !password) {
         return res.status(400).json({ message: 'Username and password are required' });
       }
       
+      console.log('Searching for admin:', username);
       const admin = await storage.getAdminByUsername(username);
+      console.log('Found admin:', admin ? 'Yes' : 'No');
       
       if (!admin || admin.password !== password) {
+        console.log('Invalid credentials - admin exists:', !!admin, 'password match:', admin?.password === password);
         return res.status(401).json({ message: 'Invalid credentials' });
       }
       
       // Send admin info without password
       const { password: _, ...adminData } = admin;
+      console.log('Login successful for:', username);
       res.json({ admin: adminData });
     } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+      console.error('Login error details:', error);
+      res.status(500).json({ message: 'Server error', details: error.message });
     }
   });
   
