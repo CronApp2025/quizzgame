@@ -519,7 +519,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ admin: adminData });
     } catch (error) {
       console.error('Login error details:', error);
-      res.status(500).json({ message: 'Server error', details: error.message });
+      res.status(500).json({ message: 'Server error', details: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
   
