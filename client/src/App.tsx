@@ -23,6 +23,9 @@ function Router() {
       <Route path="/join" component={UserJoin} />
       <Route path="/play" component={UserPlay} />
       
+      {/* Debug Route */}
+      <Route path="/debug" component={DebugPage} />
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

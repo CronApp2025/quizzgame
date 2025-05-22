@@ -57,6 +57,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const clientId = randomUUID();
     clients.set(clientId, { id: clientId, ws });
     
+    // Send client ID to the connected client
+    ws.send(JSON.stringify({
+      type: 'CLIENT_ID',
+      clientId
+    }));
+    
     ws.on('message', async (messageData) => {
       try {
         const message = JSON.parse(messageData.toString());
@@ -64,6 +70,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const client = clients.get(clientId);
         
         if (!client) {
+          return;
+        }
+        
+        // Handle special testing messages
+        if (eventType === 'GET_CLIENT_ID') {
+          sendToClient(client, {
+            type: 'CLIENT_ID',
+            clientId: client.id
+          });
+          return;
+        }
+        
+        if (eventType === 'PING') {
+          sendToClient(client, {
+            type: 'PONG',
+            data: { 
+              receivedAt: new Date().toISOString(),
+              ...message.data
+            }
+          });
           return;
         }
         
