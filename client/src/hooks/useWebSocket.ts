@@ -22,7 +22,7 @@ export function useWebSocket() {
       socket.addEventListener('message', function handleFirstMessage(event) {
         try {
           const data = JSON.parse(event.data);
-          if (data.type === 'client_id') {
+          if (data.type === 'CLIENT_ID') {
             setWsClientId(data.clientId);
             socket.removeEventListener('message', handleFirstMessage);
           }
