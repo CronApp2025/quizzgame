@@ -1,0 +1,170 @@
+Checkpoints Detallados para Desarrollo en Replit con IA Agent
+(Enfoque en Especificaciones Funcionales, No en Código)
+
+Checkpoint 1: MVP Básico (Flujo Admin + Usuario)
+Objetivo: Sistema básico de creación de quizzes y acceso por QR.
+Especificaciones:
+
+Autenticación Admin:
+
+Login simple con usuario/contraseña almacenados en Replit DB.
+
+Dashboard básico: Lista de quizzes creados (título, estado, código QR asociado).
+
+Editor de Quizzes:
+
+Creación de preguntas tipo:
+
+Opción múltiple (1 respuesta correcta).
+
+Temporizador global (15 segundos por defecto).
+
+Guardado automático en Replit DB (estructura: quizId, preguntas, fechaCreación).
+
+Acceso Usuario:
+
+Página inicial con campo para escanear QR o ingresar código manualmente.
+
+Registro con alias (guardado en Replit DB como usuario: alias, puntaje: 0).
+
+Tareas para IA Agent:
+
+Generar estructura de carpetas (frontend: React, backend: Express).
+
+Configurar Replit DB para almacenar quizzes y usuarios.
+
+Checkpoint 2: Sistema en Vivo + Sincronización
+Objetivo: Transmisión en tiempo real controlada por el host.
+Especificaciones:
+
+Panel de Control del Host:
+
+Vista Dual:
+
+Sección Izquierda: Pregunta actual + temporizador. Botones: "Iniciar Quiz", "Siguiente Pregunta".
+
+Sección Derecha: Leaderboard estático (top 5 usuarios con alias y puntaje).
+
+Integración con Socket.io para emitir eventos a usuarios (ej: "nueva-pregunta", "fin-quiz").
+
+Interfaz Usuario:
+
+Pantalla de espera con contador regresivo antes de iniciar.
+
+Durante el quiz: Mostrar pregunta y opciones en tiempo real. Animación básica al seleccionar respuesta (ej: cambio de color).
+
+QR Dinámico:
+
+Generar código QR que enlace directamente a [app-url]/join?quizId=ID.
+
+Usar paquete qrcode en backend para generar imágenes SVG.
+
+Tareas para IA Agent:
+
+Implementar lógica de Socket.io para sincronizar admin-usuarios.
+
+Diseñar flujo de eventos (ej: usuario envía respuesta → backend actualiza puntaje).
+
+Checkpoint 3: Gamificación + Diseño Moderno
+Objetivo: Experiencia tipo Kahoot/Quizizz con elementos interactivos.
+Especificaciones:
+
+Sistema de Puntos:
+
+Base: +100 puntos por respuesta correcta.
+
+Bonus: +50 puntos si responde en menos de 5 segundos.
+
+Power-Ups Opcionales (ej: "Doble Puntos" aleatorio en 1 pregunta).
+
+Diseño UI/UX:
+
+Admin:
+
+Paleta oscura (#1A1A1A) con acentos neón (#00FF88 para botones).
+
+Animaciones al cambiar preguntas (slide horizontal).
+
+Usuario:
+
+Efectos de sonido al responder (correcto/incorrecto).
+
+Leaderboard animado con avatares predeterminados (íconos SVG).
+
+Analíticas Básicas:
+
+Reporte post-quiz para admin: % de respuestas correctas/incorrectas.
+
+Usuario: Ver puntaje final y posición en el leaderboard.
+
+Tareas para IA Agent:
+
+Crear componentes React reutilizables (ej: QuestionCard, Leaderboard).
+
+Configurar lógica de cálculos de puntos en backend.
+
+Checkpoint 4: Despliegue + Optimización Final
+Objetivo: App funcional y pública en Replit.
+Especificaciones:
+
+Configuración Replit:
+
+Habilitar "Always On" para evitar desconexiones.
+
+Dominio personalizado (nombreapp.repl.co).
+
+Seguridad:
+
+Validación de entradas (evitar inyección SQL o XSS).
+
+Rate limiting básico (máximo 100 solicitudes/minuto por IP).
+
+Optimización:
+
+Cachear quizzes frecuentes en Replit DB.
+
+Pruebas de estrés con 50 usuarios simultáneos.
+
+Documentación:
+
+Guía rápida para admins (formato Markdown en el repositorio).
+
+Página de "Ayuda" para usuarios (FAQ: cómo escanear QR, reiniciar quiz).
+
+Tareas para IA Agent:
+
+Generar scripts de prueba para simulaciones de carga.
+
+Ayudar a configurar dominio personalizado en Replit.
+
+Checkpoint 5 (Opcional): Features Avanzados
+Objetivo: Ampliar funcionalidades según feedback inicial.
+Especificaciones:
+
+Tipos de Pregunta Extras:
+
+Verdadero/Falso.
+
+Ordenar opciones (drag & drop en móvil).
+
+Personalización Profunda:
+
+Admins: Cambiar colores del quiz, añadir logo.
+
+Usuarios: Elegir avatar desde una galería predefinida.
+
+Integraciones:
+
+Exportar resultados a Google Sheets (vía API).
+
+Compartir en redes sociales desde el leaderboard final.
+
+Notas Clave
+Priorizar Replit DB: Evitar bases de datos externas para simplificar.
+
+IA Agent como Asistente: Usarla para resolver errores específicos (ej: "¿Cómo filtrar quizzes por fecha en Replit DB?").
+
+Pruebas Continuas: Usar la función "Preview" de Replit para simular múltiples usuarios.
+
+¿Listo para comenzar con el Checkpoint 1? 😊
+

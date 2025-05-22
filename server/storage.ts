@@ -4,9 +4,12 @@ import {
   Question, InsertQuestion, 
   Participant, InsertParticipant, 
   Answer, InsertAnswer, 
-  QuizOption, QuizStatus 
+  QuizOption, QuizStatus,
+  admins, quizzes, questions, participants, answers
 } from "@shared/schema";
 import crypto from 'crypto';
+import { eq, and, desc } from 'drizzle-orm';
+import { db } from './db';
 
 // Storage interface
 export interface IStorage {
@@ -330,4 +333,190 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database implementation
+import { eq, and, desc } from 'drizzle-orm';
+import { db } from './db';
+
+export class DatabaseStorage implements IStorage {
+  // Admin methods
+  async getAdmin(id: number): Promise<Admin | undefined> {
+    const [admin] = await db.select().from(admins).where(eq(admins.id, id));
+    return admin;
+  }
+  
+  async getAdminByUsername(username: string): Promise<Admin | undefined> {
+    const [admin] = await db.select().from(admins).where(eq(admins.username, username));
+    return admin;
+  }
+  
+  async createAdmin(admin: InsertAdmin): Promise<Admin> {
+    const [newAdmin] = await db.insert(admins).values(admin).returning();
+    return newAdmin;
+  }
+  
+  // Quiz methods
+  async getQuiz(id: number): Promise<Quiz | undefined> {
+    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.id, id));
+    return quiz;
+  }
+  
+  async getQuizByCode(code: string): Promise<Quiz | undefined> {
+    const [quiz] = await db.select().from(quizzes).where(eq(quizzes.code, code));
+    return quiz;
+  }
+  
+  async getQuizzesByAdmin(adminId: number): Promise<Quiz[]> {
+    return db.select().from(quizzes).where(eq(quizzes.adminId, adminId));
+  }
+  
+  async createQuiz(quiz: InsertQuiz): Promise<Quiz> {
+    const [newQuiz] = await db.insert(quizzes).values(quiz).returning();
+    return newQuiz;
+  }
+  
+  async updateQuiz(id: number, quiz: Partial<Quiz>): Promise<Quiz | undefined> {
+    const [updatedQuiz] = await db.update(quizzes)
+      .set(quiz)
+      .where(eq(quizzes.id, id))
+      .returning();
+    return updatedQuiz;
+  }
+  
+  async deleteQuiz(id: number): Promise<boolean> {
+    // Delete all related questions, participants, and answers first
+    const questions = await this.getQuestionsByQuiz(id);
+    for (const question of questions) {
+      await this.deleteQuestion(question.id);
+    }
+    
+    const participants = await this.getParticipantsByQuiz(id);
+    for (const participant of participants) {
+      // Delete all answers by this participant
+      const answers = await this.getAnswersByParticipant(participant.id);
+      for (const answer of answers) {
+        await db.delete(answers).where(eq(answers.id, answer.id));
+      }
+      await db.delete(participants).where(eq(participants.id, participant.id));
+    }
+    
+    const result = await db.delete(quizzes).where(eq(quizzes.id, id)).returning();
+    return result.length > 0;
+  }
+  
+  // Question methods
+  async getQuestion(id: number): Promise<Question | undefined> {
+    const [question] = await db.select().from(questions).where(eq(questions.id, id));
+    return question;
+  }
+  
+  async getQuestionsByQuiz(quizId: number): Promise<Question[]> {
+    return db.select()
+      .from(questions)
+      .where(eq(questions.quizId, quizId))
+      .orderBy(questions.order);
+  }
+  
+  async createQuestion(question: InsertQuestion): Promise<Question> {
+    const [newQuestion] = await db.insert(questions).values(question).returning();
+    return newQuestion;
+  }
+  
+  async updateQuestion(id: number, question: Partial<Question>): Promise<Question | undefined> {
+    const [updatedQuestion] = await db.update(questions)
+      .set(question)
+      .where(eq(questions.id, id))
+      .returning();
+    return updatedQuestion;
+  }
+  
+  async deleteQuestion(id: number): Promise<boolean> {
+    // Delete all answers related to this question
+    const answers = await this.getAnswersByQuestion(id);
+    for (const answer of answers) {
+      await db.delete(answers).where(eq(answers.id, answer.id));
+    }
+    
+    const result = await db.delete(questions).where(eq(questions.id, id)).returning();
+    return result.length > 0;
+  }
+  
+  // Participant methods
+  async getParticipant(id: number): Promise<Participant | undefined> {
+    const [participant] = await db.select().from(participants).where(eq(participants.id, id));
+    return participant;
+  }
+  
+  async getParticipantsByQuiz(quizId: number): Promise<Participant[]> {
+    return db.select().from(participants).where(eq(participants.quizId, quizId));
+  }
+  
+  async createParticipant(participant: InsertParticipant): Promise<Participant> {
+    const [newParticipant] = await db.insert(participants).values(participant).returning();
+    return newParticipant;
+  }
+  
+  async updateParticipant(id: number, participant: Partial<Participant>): Promise<Participant | undefined> {
+    const [updatedParticipant] = await db.update(participants)
+      .set(participant)
+      .where(eq(participants.id, id))
+      .returning();
+    return updatedParticipant;
+  }
+  
+  // Answer methods
+  async getAnswer(id: number): Promise<Answer | undefined> {
+    const [answer] = await db.select().from(answers).where(eq(answers.id, id));
+    return answer;
+  }
+  
+  async getAnswersByParticipant(participantId: number): Promise<Answer[]> {
+    return db.select().from(answers).where(eq(answers.participantId, participantId));
+  }
+  
+  async getAnswersByQuestion(questionId: number): Promise<Answer[]> {
+    return db.select().from(answers).where(eq(answers.questionId, questionId));
+  }
+  
+  async createAnswer(answer: InsertAnswer): Promise<Answer> {
+    const [newAnswer] = await db.insert(answers).values(answer).returning();
+    
+    // Update participant score
+    const participant = await this.getParticipant(answer.participantId);
+    if (participant) {
+      const updatedScore = participant.score + answer.score;
+      await this.updateParticipant(participant.id, { score: updatedScore });
+    }
+    
+    return newAnswer;
+  }
+  
+  // Special methods
+  async getLeaderboard(quizId: number): Promise<Participant[]> {
+    return db.select()
+      .from(participants)
+      .where(eq(participants.quizId, quizId))
+      .orderBy(desc(participants.score));
+  }
+  
+  async generateQuizCode(): Promise<string> {
+    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed similar-looking characters
+    let code = '';
+    
+    // Generate a 6-character random code
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      code += characters.charAt(randomIndex);
+    }
+    
+    // Check if the code already exists, regenerate if needed
+    const existingQuiz = await this.getQuizByCode(code);
+    if (existingQuiz) {
+      return this.generateQuizCode();
+    }
+    
+    return code;
+  }
+}
+
+// Use the database storage implementation
+export const storage = new DatabaseStorage();
