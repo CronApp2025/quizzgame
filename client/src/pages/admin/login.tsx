@@ -154,7 +154,7 @@ const AdminLogin = () => {
               
               <div className="text-center mt-4">
                 <p className="text-sm text-gray-400">
-                  Default credentials: admin / password
+                  Contacta al administrador para obtener credenciales
                 </p>
               </div>
             </form>

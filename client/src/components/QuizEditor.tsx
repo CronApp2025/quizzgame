@@ -404,7 +404,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ quizId, adminId }) => {
               
               {/* Options */}
               <div className="space-y-3 mb-4">
-                <Label className="block text-sm font-medium text-gray-700">Options (select correct answer)</Label>
+                <Label className="block text-sm font-medium text-white">Options (select correct answer)</Label>
                 
                 <RadioGroup
                   value={question.options.find(opt => opt.isCorrect)?.id.toString() || ''}
