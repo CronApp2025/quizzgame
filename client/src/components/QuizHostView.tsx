@@ -385,23 +385,73 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
             {/* Quiz State: Ended */}
             {quizState === 'ended' && (
               <div className="animate-fade-in">
-                <h3 className="text-white text-2xl mb-4 font-bold">Quiz Completed</h3>
-                <p className="text-gray-400 mb-6">All questions have been answered</p>
+                <h3 className="text-white text-2xl mb-4 font-bold">¡Quiz completado!</h3>
+                <p className="text-gray-400 mb-6">Todas las preguntas han sido respondidas</p>
                 
                 <div className="bg-[#3A3A3A] p-6 rounded-xl mb-6 max-w-2xl mx-auto">
-                  <h4 className="text-white text-xl mb-4">Final Results</h4>
+                  <h4 className="text-white text-xl mb-4">Resultados finales</h4>
+                  
                   {participants.length > 0 ? (
-                    <div className="flex items-center justify-center mb-4">
-                      <div className="w-16 h-16 rounded-full bg-[#00FF88] flex items-center justify-center text-dark text-2xl font-bold mr-4">
-                        1
+                    <div className="space-y-6">
+                      {/* Podio de ganadores */}
+                      <div className="flex justify-center items-end mt-8 mb-8">
+                        {participants.length > 1 && (
+                          <div className="flex flex-col items-center mx-2">
+                            <div className="w-14 h-14 rounded-full bg-[#C0C0C0] flex items-center justify-center text-dark text-xl font-bold mb-2">
+                              2
+                            </div>
+                            <div className="w-20 h-24 bg-[#333] rounded-t-lg flex flex-col items-center justify-end p-2">
+                              <div className="text-[#C0C0C0] font-bold mb-1 text-sm truncate w-full text-center">{participants[1].alias}</div>
+                              <div className="text-white text-xs">{participants[1].score} pts</div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Primer lugar */}
+                        <div className="flex flex-col items-center mx-2 -mt-4">
+                          <div className="w-10 h-10 text-yellow-500 mb-1">👑</div>
+                          <div className="w-16 h-16 rounded-full bg-[#FFD700] flex items-center justify-center text-dark text-2xl font-bold mb-2">
+                            1
+                          </div>
+                          <div className="w-24 h-32 bg-[#444] rounded-t-lg flex flex-col items-center justify-end p-2">
+                            <div className="text-[#FFD700] font-bold mb-1 truncate w-full text-center">{participants[0].alias}</div>
+                            <div className="text-white">{participants[0].score} pts</div>
+                          </div>
+                        </div>
+                        
+                        {participants.length > 2 && (
+                          <div className="flex flex-col items-center mx-2">
+                            <div className="w-12 h-12 rounded-full bg-[#CD7F32] flex items-center justify-center text-dark text-lg font-bold mb-2">
+                              3
+                            </div>
+                            <div className="w-20 h-20 bg-[#333] rounded-t-lg flex flex-col items-center justify-end p-2">
+                              <div className="text-[#CD7F32] font-bold mb-1 text-sm truncate w-full text-center">{participants[2].alias}</div>
+                              <div className="text-white text-xs">{participants[2].score} pts</div>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <div className="text-left">
-                        <div className="text-[#00FF88] text-2xl font-bold">{participants[0].alias}</div>
-                        <div className="text-white">{participants[0].score} points</div>
+                      
+                      {/* Lista de puntajes */}
+                      <div className="mt-6 border-t border-gray-700 pt-4">
+                        <h5 className="text-white mb-2">Tabla de puntajes</h5>
+                        <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                          {participants.slice(0, 10).map((participant, index) => (
+                            <div key={participant.id} className="flex justify-between items-center p-2 bg-[#2D2D2D] rounded">
+                              <div className="flex items-center">
+                                <div className="w-6 h-6 rounded-full bg-dark flex items-center justify-center text-xs text-white mr-2">
+                                  {index + 1}
+                                </div>
+                                <span className="text-white">{participant.alias}</span>
+                              </div>
+                              <span className="text-[#00FF88] font-bold">{participant.score}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="text-gray-400">No participants</div>
+                    <div className="text-gray-400 text-center py-10">No hay participantes en este quiz</div>
                   )}
                 </div>
                 
@@ -409,7 +459,7 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
                   className="px-6 py-3 bg-[#00FF88] text-dark font-bold rounded-lg hover:bg-opacity-90"
                   onClick={returnToDashboard}
                 >
-                  Return to Dashboard
+                  Volver al Dashboard
                 </Button>
               </div>
             )}

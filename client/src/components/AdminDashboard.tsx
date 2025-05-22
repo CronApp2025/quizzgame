@@ -23,9 +23,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ adminId }) => {
     queryKey: [`/api/quizzes?adminId=${adminId}`],
   });
 
+  // Estado para controlar qué quiz está siendo eliminado
+  const [deletingQuizId, setDeletingQuizId] = useState<number | null>(null);
+
   // Delete quiz mutation
   const deleteQuizMutation = useMutation({
     mutationFn: async (quizId: number) => {
+      setDeletingQuizId(quizId);
       const res = await fetch(`/api/quizzes/${quizId}`, {
         method: 'DELETE',
         credentials: 'include',
@@ -40,14 +44,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ adminId }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/quizzes?adminId=${adminId}`] });
       toast({
-        title: 'Quiz deleted',
-        description: 'The quiz has been successfully deleted',
+        title: 'Quiz eliminado',
+        description: 'El quiz ha sido eliminado correctamente',
       });
+      setDeletingQuizId(null);
     },
     onError: () => {
+      setDeletingQuizId(null);
       toast({
         title: 'Error',
-        description: 'Failed to delete quiz',
+        description: 'No se pudo eliminar el quiz',
         variant: 'destructive',
       });
     },
@@ -192,8 +198,13 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ adminId }) => {
                           <button 
                             className="p-2 text-gray-500 hover:text-[#FF3366] rounded-full hover:bg-gray-100"
                             onClick={() => handleDeleteQuiz(quiz.id)}
+                            disabled={deletingQuizId === quiz.id}
                           >
-                            <span>🗑️</span>
+                            {deletingQuizId === quiz.id ? (
+                              <div className="w-5 h-5 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                            ) : (
+                              <span>🗑️</span>
+                            )}
                           </button>
                         </div>
                       </div>
