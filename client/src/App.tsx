@@ -7,6 +7,7 @@ import EditQuiz from "@/pages/admin/edit-quiz";
 import HostQuiz from "@/pages/admin/host-quiz";
 import UserJoin from "@/pages/user/join";
 import UserPlay from "@/pages/user/play";
+import DebugPage from "@/pages/debug";
 
 function Router() {
   return (

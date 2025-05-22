@@ -334,8 +334,6 @@ export class MemStorage implements IStorage {
 }
 
 // Database implementation
-import { eq, and, desc } from 'drizzle-orm';
-import { db } from './db';
 
 export class DatabaseStorage implements IStorage {
   // Admin methods

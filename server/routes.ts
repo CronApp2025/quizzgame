@@ -11,15 +11,15 @@ import { randomUUID } from "crypto";
 
 // WebSocket event types
 enum WSEventType {
-  JOIN_QUIZ = "join_quiz",
-  QUIZ_STARTED = "quiz_started",
-  NEW_QUESTION = "new_question",
-  SUBMIT_ANSWER = "submit_answer",
-  QUESTION_ENDED = "question_ended",
-  QUIZ_ENDED = "quiz_ended",
-  LEADERBOARD_UPDATE = "leaderboard_update",
-  ERROR = "error",
-  PLAYER_JOINED = "player_joined",
+  JOIN_QUIZ = "JOIN_QUIZ",
+  QUIZ_STARTED = "QUIZ_STARTED",
+  NEW_QUESTION = "NEW_QUESTION",
+  SUBMIT_ANSWER = "SUBMIT_ANSWER",
+  QUESTION_ENDED = "QUESTION_ENDED",
+  QUIZ_ENDED = "QUIZ_ENDED",
+  LEADERBOARD_UPDATE = "LEADERBOARD_UPDATE",
+  ERROR = "ERROR",
+  PLAYER_JOINED = "PLAYER_JOINED",
 }
 
 // WebSocket connection management

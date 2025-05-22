@@ -51,7 +51,7 @@ const UserLogin: React.FC<UserLoginProps> = ({ initialCode = '', onJoin }) => {
     
     // Send join request to WebSocket server
     socket.send(JSON.stringify({
-      type: 'join_quiz',
+      type: 'JOIN_QUIZ',
       data: {
         quizCode: quizCode.trim().toUpperCase(),
         alias: alias.trim()
@@ -63,12 +63,12 @@ const UserLogin: React.FC<UserLoginProps> = ({ initialCode = '', onJoin }) => {
       try {
         const message = JSON.parse(event.data);
         
-        if (message.type === 'join_quiz') {
+        if (message.type === 'JOIN_QUIZ') {
           // Successfully joined
           const { participantId, quizId } = message.data;
           onJoin(participantId, quizId);
           socket.removeEventListener('message', handleJoinResponse);
-        } else if (message.type === 'error') {
+        } else if (message.type === 'ERROR') {
           // Error joining
           toast({
             title: 'Could not join quiz',
