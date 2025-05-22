@@ -735,12 +735,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       clients.set(wsClientId, client);
       
       // Initialize or update active quiz
-      const activeQuiz = activeQuizzes.get(quizId) || {
-        quizId,
-        status: "waiting"
-      };
-      
-      activeQuiz.adminWsId = wsClientId;
+      let activeQuiz = activeQuizzes.get(quizId);
+      if (!activeQuiz) {
+        activeQuiz = {
+          quizId,
+          status: "waiting",
+          adminWsId: wsClientId
+        };
+      } else {
+        activeQuiz.adminWsId = wsClientId;
+      }
       activeQuizzes.set(quizId, activeQuiz);
       
       // Get participant count

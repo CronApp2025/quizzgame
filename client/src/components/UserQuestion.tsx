@@ -56,23 +56,29 @@ const UserQuestion: React.FC<UserQuestionProps> = ({
             clearInterval(timer.current);
           }
           
+          // Set initial time
+          const initialTime = message.data.timeLimit || 15;
+          setTimeLeft(initialTime);
+          
+          // Start the interval timer (update every second)
           timer.current = setInterval(() => {
-            setTimeLeft(prev => {
-              if (prev <= 1) {
-                clearInterval(timer.current!);
-                // Auto-submit if time runs out and user hasn't answered
-                if (!isSubmitting && selectedOption === null) {
-                  // We don't actually submit - just time out
-                  toast({
-                    title: "Time is up!",
-                    description: "You did not answer in time",
-                    variant: 'destructive',
-                  });
-                }
-                return 0;
+            const elapsedSeconds = Math.floor((Date.now() - startTime.current) / 1000);
+            const remaining = Math.max(0, initialTime - elapsedSeconds);
+            
+            setTimeLeft(remaining);
+            
+            if (remaining <= 0) {
+              clearInterval(timer.current!);
+              // Auto-submit if time runs out and user hasn't answered
+              if (!isSubmitting && selectedOption === null) {
+                // We don't actually submit - just time out
+                toast({
+                  title: "Time is up!",
+                  description: "You did not answer in time",
+                  variant: 'destructive',
+                });
               }
-              return prev - 1;
-            });
+            }
           }, 1000);
         }
       } catch (error) {

@@ -172,17 +172,22 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
       clearInterval(timer.current);
     }
     
+    // Record start time
+    const startTime = new Date().getTime();
+    const endTime = startTime + (questionTime * 1000);
+    
     timer.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          // Time's up, end the question
-          clearInterval(timer.current!);
-          endQuestion();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+      const currentTime = new Date().getTime();
+      const remaining = Math.max(0, Math.ceil((endTime - currentTime) / 1000));
+      
+      setTimeLeft(remaining);
+      
+      if (remaining <= 0) {
+        // Time's up, end the question
+        clearInterval(timer.current!);
+        endQuestion();
+      }
+    }, 200); // Update more frequently for smoother countdown
   };
 
   // End current question
