@@ -132,7 +132,7 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
     if (!socket || !questionsData?.questions.length) return;
     
     socket.send(JSON.stringify({
-      type: 'quiz_started',
+      type: 'QUIZ_STARTED',
       data: { quizId }
     }));
     
@@ -156,7 +156,7 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
     setCurrentQuestion(question);
     
     socket.send(JSON.stringify({
-      type: 'new_question',
+      type: 'NEW_QUESTION',
       data: {
         questionId: question.id
       }
@@ -199,7 +199,7 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
     }
     
     socket.send(JSON.stringify({
-      type: 'question_ended',
+      type: 'QUESTION_ENDED',
       data: {
         questionId: currentQuestion.id
       }
@@ -219,7 +219,7 @@ const QuizHostView: React.FC<QuizHostViewProps> = ({ quizId, adminId }) => {
     if (!socket) return;
     
     socket.send(JSON.stringify({
-      type: 'quiz_ended',
+      type: 'QUIZ_ENDED',
       data: { quizId }
     }));
     

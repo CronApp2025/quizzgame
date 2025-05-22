@@ -40,7 +40,7 @@ const UserQuestion: React.FC<UserQuestionProps> = ({
       try {
         const message = JSON.parse(event.data);
         
-        if (message.type === 'new_question') {
+        if (message.type === 'NEW_QUESTION') {
           // Reset state for new question
           setSelectedOption(null);
           setIsSubmitting(false);
@@ -109,7 +109,7 @@ const UserQuestion: React.FC<UserQuestionProps> = ({
     // Send answer to server
     if (socket) {
       socket.send(JSON.stringify({
-        type: 'submit_answer',
+        type: 'SUBMIT_ANSWER',
         data: {
           questionId: question.questionId,
           optionId,
@@ -123,7 +123,7 @@ const UserQuestion: React.FC<UserQuestionProps> = ({
       try {
         const message = JSON.parse(event.data);
         
-        if (message.type === 'submit_answer') {
+        if (message.type === 'SUBMIT_ANSWER') {
           // Process answer result
           const { isCorrect, score, correctOptionId } = message.data;
           onAnswerSubmitted(isCorrect, score, correctOptionId);

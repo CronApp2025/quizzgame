@@ -27,7 +27,7 @@ const UserWaiting: React.FC<UserWaitingProps> = ({
       try {
         const message = JSON.parse(event.data);
         
-        if (message.type === 'quiz_started') {
+        if (message.type === 'QUIZ_STARTED') {
           // Quiz is starting! Begin countdown
           setCountdown(3);
         }
